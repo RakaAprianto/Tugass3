@@ -1,0 +1,894 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itenas Cloud Storage</title>
+  <link rel="icon" type="image/png" href="/assets/itenas.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #df4b11;
+      --secondary-color: #6d070f;
+      --accent-color: #4895ef;
+      --success-color: #4cc9f0;
+      --danger-color: #f72585;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #6c757d;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f2f5;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1.5rem 0;
+      box-shadow: var(--box-shadow);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-icon {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+
+    .main {
+      padding: 2rem 0;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark-color);
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .card-title i {
+      margin-right: 10px;
+      color: var(--primary-color);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .upload-container {
+      border: 2px dashed rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      text-align: center;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .upload-container:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .upload-text {
+      color: var(--gray-color);
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      user-select: none;
+      border: 1px solid transparent;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      color: white;
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-danger {
+      color: white;
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .btn-danger:hover {
+      background-color: #e5134f;
+      border-color: #e5134f;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 50px;
+    }
+
+    .badge-primary {
+      color: white;
+      background-color: var(--primary-color);
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1rem 0;
+      display: none;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(67, 97, 238, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error {
+      color: var(--danger-color);
+      text-align: center;
+      margin: 1rem 0;
+      display: none;
+      padding: 0.75rem;
+      background-color: rgba(247, 37, 133, 0.1);
+      border-radius: var(--border-radius);
+    }
+
+    .file-list {
+      margin-top: 1rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+
+    .file-item:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .file-icon {
+      font-size: 1.5rem;
+      margin-right: 0.75rem;
+      color: var(--primary-color);
+    }
+
+    .file-details {
+      flex-grow: 1;
+    }
+
+    .file-name {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      word-break: break-all;
+    }
+
+    .file-meta {
+      display: flex;
+      font-size: 0.75rem;
+      color: var(--gray-color);
+    }
+
+    .file-size {
+      margin-right: 1rem;
+    }
+
+    .file-date {
+      margin-right: 1rem;
+    }
+
+    .file-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .file-action {
+      margin-left: 0.5rem;
+      color: var(--gray-color);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .file-action:hover {
+      color: var(--primary-color);
+    }
+
+    .file-action.delete:hover {
+      color: var(--danger-color);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray-color);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: rgba(0, 0, 0, 0.2);
+    }
+
+    .search-bar {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-color);
+    }
+
+    .toolbar {
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sort-options {
+      display: flex;
+      align-items: center;
+    }
+
+    .sort-label {
+      margin-right: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--gray-color);
+    }
+
+    .sort-select {
+      padding: 0.375rem 0.75rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      background-color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem 0;
+      color: var(--gray-color);
+      font-size: 0.875rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .logo {
+        margin-bottom: 1rem;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sort-options {
+        margin-top: 1rem;
+      }
+
+      .file-details {
+        overflow: hidden;
+      }
+
+      .file-meta {
+        flex-direction: column;
+      }
+
+      .file-size, .file-date {
+        margin-right: 0;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+            <img src="/assets/itenas.png" alt="Itenas Cloud Storage Logo" width="50">
+            Itenas Cloud Storage
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fas fa-cloud-upload-alt"></i>
+            Upload File
+          </h2>
+        </div>
+        <div class="card-body">
+          <form id="upload-form" enctype="multipart/form-data">
+            <div class="upload-container" id="drop-area">
+              <i class="fas fa-cloud-upload-alt upload-icon"></i>
+              <input type="file" id="file-input" name="file" class="file-input">
+              <p class="upload-text">Drag & drop file di sini atau <strong>browse</strong></p>
+              <button type="button" id="browse-btn" class="btn btn-primary">Pilih File</button>
+            </div>
+            <div id="selected-file" style="display: none; margin-top: 1rem; text-align: center;">
+              <span id="file-name"></span>
+              <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">Upload</button>
+            </div>
+          </form>
+          <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <span>Mengunggah...</span>
+          </div>
+          <div id="error" class="error"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fas fa-folder-open"></i>
+            File Storage
+          </h2>
+          <button id="refresh-button" class="btn btn-primary btn-sm">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Cari file...">
+          </div>
+          <div class="toolbar">
+            <span id="file-count" class="badge badge-primary">0 Files</span>
+            <div class="sort-options">
+              <span class="sort-label">Urutkan:</span>
+              <select id="sort-select" class="sort-select">
+                <option value="name-asc">Nama (A-Z)</option>
+                <option value="name-desc">Nama (Z-A)</option>
+                <option value="date-desc">Terbaru</option>
+                <option value="date-asc">Terlama</option>
+                <option value="size-desc">Ukuran (Besar-Kecil)</option>
+                <option value="size-asc">Ukuran (Kecil-Besar)</option>
+              </select>
+            </div>
+          </div>
+          <div id="files-container" class="file-list">
+            <!-- File items will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Itenas Cloud Storage. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+  const uploadForm = document.getElementById('upload-form');
+  const fileInput = document.getElementById('file-input');
+  const browseBtn = document.getElementById('browse-btn');
+  const dropArea = document.getElementById('drop-area');
+  const selectedFileDiv = document.getElementById('selected-file');
+  const fileNameSpan = document.getElementById('file-name');
+  const loadingDiv = document.getElementById('loading');
+  const errorDiv = document.getElementById('error');
+  const filesContainer = document.getElementById('files-container');
+  const searchInput = document.getElementById('search-input');
+  const sortSelect = document.getElementById('sort-select');
+  const refreshButton = document.getElementById('refresh-button');
+  const fileCountBadge = document.getElementById('file-count');
+  
+  // Browse button click handler
+  browseBtn.addEventListener('click', function() {
+    fileInput.click();
+  });
+  
+  // File input change handler
+  fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      fileNameSpan.textContent = this.files[0].name;
+      selectedFileDiv.style.display = 'block';
+    }
+  });
+  
+  // Drag and drop handlers
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+  
+  function highlight() {
+    dropArea.classList.add('highlight');
+  }
+  
+  function unhighlight() {
+    dropArea.classList.remove('highlight');
+  }
+  
+  dropArea.addEventListener('drop', handleDrop, false);
+  
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    
+    if (files && files[0]) {
+      fileInput.files = files;
+      fileNameSpan.textContent = files[0].name;
+      selectedFileDiv.style.display = 'block';
+    }
+  }
+  
+  // Form submit handler
+  uploadForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const file = fileInput.files[0];
+    if (!file) {
+      showError('Silakan pilih file terlebih dahulu');
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    showLoading(true);
+    hideError();
+    
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Gagal mengunggah file');
+      }
+      
+      // Reset form
+      uploadForm.reset();
+      selectedFileDiv.style.display = 'none';
+      
+      // Refresh file list
+      loadFiles();
+      
+      alert('File berhasil diunggah');
+    } catch (error) {
+      showError(error.message);
+    } finally {
+      showLoading(false);
+    }
+  });
+  
+  // Helper functions
+  function showLoading(show) {
+    loadingDiv.style.display = show ? 'flex' : 'none';
+  }
+  
+  function showError(message) {
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+  }
+  
+  function hideError() {
+    errorDiv.style.display = 'none';
+  }
+  
+  // Format file size 
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    if (!bytes || isNaN(bytes)) return 'Unknown size';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+  
+  // fungsi file list
+  async function loadFiles() {
+    showLoading(true);
+    
+    try {
+      const response = await fetch('/api/files');
+      
+      if (!response.ok) {
+        throw new Error('Gagal mengambil daftar file');
+      }
+      
+      const files = await response.json();
+      console.log("Files dari API:", files); 
+      
+      // Update file 
+      fileCountBadge.textContent = `${files.length} Files`;
+      
+      // Display files
+      displayFiles(files);
+    } catch (error) {
+      showError(error.message);
+      console.error(error); // Log error lengkap
+      
+      // Display kosong
+      filesContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle empty-icon" style="color: #f72585;"></i>
+          <p>Gagal memuat file: ${error.message}</p>
+        </div>
+      `;
+    } finally {
+      showLoading(false);
+    }
+  }
+  
+  function displayFiles(files) {
+    // Clear container
+    filesContainer.innerHTML = '';
+    
+    if (!files || files.length === 0) {
+      filesContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-folder-open empty-icon"></i>
+          <p>Tidak ada file yang tersimpan</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Sort files
+    const sortOption = sortSelect.value;
+    sortFiles(files, sortOption);
+    
+    // Filter files
+    const searchTerm = searchInput.value.toLowerCase();
+    const filteredFiles = searchTerm ? 
+      files.filter(file => file.name && file.name.toLowerCase().includes(searchTerm)) : 
+      files;
+    
+    // Display each file
+    filteredFiles.forEach(file => {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+      
+      console.log("Processing file:", file);
+      
+      const size = formatFileSize(file.size);
+      
+      let date = 'Unknown date';
+      try {
+        if (file.lastModified) {
+          date = new Date(file.lastModified).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+        }
+      } catch (e) {
+        console.error("Date formatting error:", e);
+      }
+      
+      // Get file icon with error handling
+      const fileIcon = getFileIcon(file.name);
+      
+      fileItem.innerHTML = `
+        <i class="${fileIcon} file-icon"></i>
+        <div class="file-details">
+          <div class="file-name">${file.name || 'Unnamed File'}</div>
+          <div class="file-meta">
+            <span class="file-size">${size}</span>
+            <span class="file-date">${date}</span>
+          </div>
+        </div>
+        <div class="file-actions">
+          <i class="fas fa-download file-action download" data-file="${file.name}" title="Download"></i>
+          <i class="fas fa-trash file-action delete" data-file="${file.name}" title="Delete"></i>
+        </div>
+      `;
+      
+      filesContainer.appendChild(fileItem);
+    });
+    
+    // Menambahkan event listeners untuk aksi file
+    document.querySelectorAll('.file-action.download').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const fileName = this.getAttribute('data-file');
+        downloadFile(fileName);
+      });
+    });
+    
+    document.querySelectorAll('.file-action.delete').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const fileName = this.getAttribute('data-file');
+        deleteFile(fileName);
+      });
+    });
+  }
+  
+  function sortFiles(files, sortOption) {
+    if (!files || !Array.isArray(files)) return;
+    
+    switch (sortOption) {
+      case 'name-asc':
+        files.sort((a, b) => {
+          const nameA = a.name ? a.name.toString() : '';
+          const nameB = b.name ? b.name.toString() : '';
+          return nameA.localeCompare(nameB);
+        });
+        break;
+      case 'name-desc':
+        files.sort((a, b) => {
+          const nameA = a.name ? a.name.toString() : '';
+          const nameB = b.name ? b.name.toString() : '';
+          return nameB.localeCompare(nameA);
+        });
+        break;
+      case 'date-desc':
+        files.sort((a, b) => {
+          if (!a.lastModified) return 1;
+          if (!b.lastModified) return -1;
+          return new Date(b.lastModified) - new Date(a.lastModified);
+        });
+        break;
+      case 'date-asc':
+        files.sort((a, b) => {
+          if (!a.lastModified) return 1;
+          if (!b.lastModified) return -1;
+          return new Date(a.lastModified) - new Date(b.lastModified);
+        });
+        break;
+      case 'size-desc':
+        files.sort((a, b) => {
+          if (!a.size) return 1;
+          if (!b.size) return -1;
+          return b.size - a.size;
+        });
+        break;
+      case 'size-asc':
+        files.sort((a, b) => {
+          if (!a.size) return 1;
+          if (!b.size) return -1;
+          return a.size - b.size;
+        });
+        break;
+    }
+  }
+  
+  function getFileIcon(fileName) {
+    if (!fileName) return 'fas fa-file'; // Default icon file
+    
+    const extension = fileName.split('.').pop().toLowerCase();
+    
+    const iconMap = {
+      'pdf': 'fas fa-file-pdf',
+      'doc': 'fas fa-file-word',
+      'docx': 'fas fa-file-word',
+      'xls': 'fas fa-file-excel',
+      'xlsx': 'fas fa-file-excel',
+      'ppt': 'fas fa-file-powerpoint',
+      'pptx': 'fas fa-file-powerpoint',
+      'jpg': 'fas fa-file-image',
+      'jpeg': 'fas fa-file-image',
+      'png': 'fas fa-file-image',
+      'gif': 'fas fa-file-image',
+      'zip': 'fas fa-file-archive',
+      'rar': 'fas fa-file-archive',
+      'txt': 'fas fa-file-alt',
+      'mp3': 'fas fa-file-audio',
+      'mp4': 'fas fa-file-video'
+    };
+    
+    return iconMap[extension] || 'fas fa-file';
+  }
+  
+  async function downloadFile(fileName) {
+  try {
+    const response = await fetch(`/api/download/${encodeURIComponent(fileName)}`);
+    
+    if (!response.ok) {
+      throw new Error('Gagal mengunduh file');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (error) {
+    showError(`Gagal mengunduh file: ${error.message}`);
+  }
+}
+
+// Fungsi delete file
+async function deleteFile(fileName) {
+  if (!confirm(`Apakah Anda yakin ingin menghapus file "${fileName}"?`)) {
+    return;
+  }
+
+  showLoading(true);
+  hideError();
+
+  try {
+    const response = await fetch(`/api/delete/${encodeURIComponent(fileName)}`, {
+      method: 'DELETE',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    alert('File berhasil dihapus');
+    loadFiles();
+  } catch (error) {
+    showError(`Gagal menghapus file: ${error.message}`);
+  } finally {
+    showLoading(false);
+  }
+}
+
+  
+  // Event listeners for search and sort
+  searchInput.addEventListener('input', function() {
+    loadFiles();
+  });
+  
+  sortSelect.addEventListener('change', function() {
+    loadFiles();
+  });
+  
+  // Refresh button
+  refreshButton.addEventListener('click', function() {
+    loadFiles();
+  });
+  
+  // Initial load
+  loadFiles();
+});
+  </script>
+</body>
+</html>
